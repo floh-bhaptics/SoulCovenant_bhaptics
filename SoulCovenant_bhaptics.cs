@@ -171,5 +171,36 @@ namespace SoulCovenant_bhaptics
             }
         }
 
+        [HarmonyPatch(typeof(PlayerBase), "Damage", new Type[] { typeof(int) })]
+        public class bhaptics_HealthDamage
+        {
+            [HarmonyPostfix]
+            public static void Postfix(PlayerBase __instance, int damage)
+            {
+                if (__instance.PlayerStatus.NowHP.Value <= 0.25f * __instance.PlayerStatus.MaxHP.Value) tactsuitVr.StartHeartBeat();
+                else tactsuitVr.StopHeartBeat();
+            }
+        }
+
+        [HarmonyPatch(typeof(PlayerBase), "RecoverNowHP", new Type[] { typeof(int) })]
+        public class bhaptics_RecoverHP
+        {
+            [HarmonyPostfix]
+            public static void Postfix(PlayerBase __instance)
+            {
+                if (__instance.PlayerStatus.NowHP.Value > 0.25f * __instance.PlayerStatus.MaxHP.Value) tactsuitVr.StopHeartBeat();
+            }
+        }
+
+        [HarmonyPatch(typeof(PlayerBase), "SetNowHP", new Type[] { typeof(int) })]
+        public class bhaptics_SetHP
+        {
+            [HarmonyPostfix]
+            public static void Postfix(PlayerBase __instance)
+            {
+                if (__instance.PlayerStatus.NowHP.Value > 0.25f * __instance.PlayerStatus.MaxHP.Value) tactsuitVr.StopHeartBeat();
+            }
+        }
+
     }
 }
