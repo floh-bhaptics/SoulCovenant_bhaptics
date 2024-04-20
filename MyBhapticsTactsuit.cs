@@ -31,7 +31,7 @@ namespace MyBhapticsTactsuit
         public TactsuitVR()
         {
             LOG("Initializing suit");
-            var res = BhapticsSDK2.Initialize("EbZ73nerOmcM3AOVoyr2", "Df9MuZU0Q9x2VEh27MwU");
+            var res = BhapticsSDK2.Initialize("66237855aad7a3151d4f964a", "YgW1Lpikm4Z8XLvHj45p");
 
             suitDisabled = res != 0;
             LOG("Starting HeartBeat and NeckTingle thread... " + res);
