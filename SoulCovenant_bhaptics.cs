@@ -38,7 +38,7 @@ namespace SoulCovenant_bhaptics
                 tactsuitVr.LOG("WeaponHits.");
                 bool rightHand = (__instance.controllerHand == BNG.ControllerHand.Right);
                 bool twoHanded = (__instance.WeaponAttackParameter.WeaponTypeValue == WeaponType.Critical);
-                tactsuitVr.Recoil("Blade", rightHand, twoHanded);
+                tactsuitVr.MeleeRecoil(rightHand, twoHanded);
             }
         }
 
@@ -112,7 +112,7 @@ namespace SoulCovenant_bhaptics
             public static void Postfix(SoulAbsorber __instance, ref ControllerHand ___viberationHand)
             {
                 bool isRight = (___viberationHand == ControllerHand.Right);
-                tactsuitVr.PlaybackHaptics("HeartBeat");
+                tactsuitVr.AbsorbSoul(isRight);
             }
         }
 

@@ -39,9 +39,8 @@
       <HintPath>F:\SteamLibrary\steamapps\common\SOUL COVENANT\soulcovenant_Data\Managed\Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="bHapticsLib">
-      <HintPath>F:\SteamLibrary\steamapps\common\SOUL COVENANT\MelonLoader\net35\bHapticsLib.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="Bhaptics.Tact">
+      <HintPath>.\Bhaptics.Tact.dll</HintPath>
     </Reference>
     <Reference Include="MelonLoader">
       <HintPath>F:\SteamLibrary\steamapps\common\SOUL COVENANT\MelonLoader\net35\MelonLoader.dll</HintPath>
@@ -71,6 +70,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>XCOPY "$(SolutionDir)bHaptics" "$(TargetDir)\bHaptics\" /S /Y</PostBuildEvent>
+    <PostBuildEvent>XCOPY "$(SolutionDir)bhaptics_library.dll" "$(TargetDir)\" /S /Y</PostBuildEvent>
   </PropertyGroup>
 </Project>
