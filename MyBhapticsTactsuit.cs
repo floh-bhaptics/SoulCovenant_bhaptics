@@ -119,7 +119,7 @@ namespace MyBhapticsTactsuit
             bHapticsLib.bHapticsManager.PlayRegistered(key, key, scaleOption, rotationOption);
         }
 
-        public void Recoil(string weaponName, bool isRightHand, float intensity = 1.0f)
+        public void Recoil(string weaponName, bool isRightHand, bool twoHanded, float intensity = 1.0f)
         {
             // weaponName is a parameter that will go into the vest feedback pattern name
             // isRightHand is just which side the feedback is on
@@ -131,11 +131,14 @@ namespace MyBhapticsTactsuit
             var rotationFront = new bHapticsLib.RotationOption(0f, 0f);
             // make postfix according to parameter
             string postfix = "_L";
-            if (isRightHand) { postfix = "_R"; }
+            string otherPostfix = "_R";
+            if (isRightHand) { postfix = "_R"; otherPostfix = "_L"; }
 
             // stitch together pattern names for Arm and Hand recoil
             string keyHands = "RecoilHands" + postfix;
             string keyArm = "Recoil" + postfix;
+            string otherkeyHands = "RecoilHands" + otherPostfix;
+            string otherkeyArm = "Recoil" + otherPostfix;
             // vest pattern name contains the weapon name. This way, you can quickly switch
             // between swords, pistols, shotguns, ... by just changing the shoulder feedback
             // and scaling via the intensity for arms and hands
@@ -143,6 +146,11 @@ namespace MyBhapticsTactsuit
             bHapticsLib.bHapticsManager.PlayRegistered(keyHands, keyHands, scaleOption, rotationFront);
             bHapticsLib.bHapticsManager.PlayRegistered(keyArm, keyArm, scaleOption, rotationFront);
             bHapticsLib.bHapticsManager.PlayRegistered(keyVest, keyVest, scaleOption, rotationFront);
+            if (twoHanded)
+            {
+                bHapticsLib.bHapticsManager.PlayRegistered(otherkeyHands, otherkeyHands, scaleOption, rotationFront);
+                bHapticsLib.bHapticsManager.PlayRegistered(otherkeyArm, otherkeyArm, scaleOption, rotationFront);
+            }
         }
 
         public void CastSpell(string spellName, bool isRightHand, float intensity = 1.0f)
