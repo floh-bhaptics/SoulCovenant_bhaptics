@@ -13,6 +13,8 @@ using UnityEngine;
 using VEGA.InGame.Attack;
 using System.Threading;
 using BNG;
+using VEGA.MasterData;
+using VEGA.Utility;
 
 [assembly: MelonInfo(typeof(SoulCovenant_bhaptics.SoulCovenant_bhaptics), "SoulCovenant_bhaptics", "1.0.0", "Florian Fahrenberger")]
 [assembly: MelonGame("thirdverse", "soulcovenant")]
@@ -22,6 +24,7 @@ namespace SoulCovenant_bhaptics
     public class SoulCovenant_bhaptics : MelonMod
     {
         public static TactsuitVR tactsuitVr;
+        private static bool rightHanded = true;
 
         public override void OnInitializeMelon()
         {
@@ -35,10 +38,62 @@ namespace SoulCovenant_bhaptics
             [HarmonyPostfix]
             public static void Postfix(Weapon __instance)
             {
-                tactsuitVr.LOG("WeaponHits.");
                 bool rightHand = (__instance.controllerHand == BNG.ControllerHand.Right);
                 bool twoHanded = (__instance.WeaponAttackParameter.WeaponTypeValue == WeaponType.Critical);
                 tactsuitVr.MeleeRecoil(rightHand, twoHanded);
+            }
+        }
+
+        [HarmonyPatch(typeof(TransformWeapon), "OnGrabbed", new Type[] { typeof(Grabber) })]
+        public class bhaptics_TransformWeapon
+        {
+            [HarmonyPostfix]
+            public static void Postfix(TransformWeapon __instance)
+            {
+                bool isRight = (__instance.ThisWeapon.controllerHand == BNG.ControllerHand.Right);
+                tactsuitVr.TranformWeapon(isRight);
+            }
+        }
+
+        [HarmonyPatch(typeof(TransformWeapon), "OnReleased", new Type[] {  })]
+        public class bhaptics_UnTransformWeapon
+        {
+            [HarmonyPostfix]
+            public static void Postfix(TransformWeapon __instance)
+            {
+                bool isRight = (__instance.ThisWeapon.controllerHand == BNG.ControllerHand.Right);
+                tactsuitVr.TranformWeapon(isRight);
+            }
+        }
+
+        [HarmonyPatch(typeof(Weapon), "OwnerInitialize", new Type[] { typeof(Player), typeof(ID_SWORD), typeof(DominantHandSetter.DominantHandType), typeof(Action<Weapon>), typeof(Action<Weapon>) })]
+        public class bhaptics_SummonWeapon
+        {
+            [HarmonyPostfix]
+            public static void Postfix(Weapon __instance)
+            {
+                bool isRight = (__instance.controllerHand == BNG.ControllerHand.Right);
+                tactsuitVr.TranformWeapon(isRight);
+            }
+        }
+
+        [HarmonyPatch(typeof(LaserBase), "LaserExposureStart", new Type[] {  })]
+        public class bhaptics_DemonicBurstStart
+        {
+            [HarmonyPostfix]
+            public static void Postfix(LaserBase __instance)
+            {
+                tactsuitVr.BurstRecoil(rightHanded);
+            }
+        }
+
+        [HarmonyPatch(typeof(LaserBase), "LaserFinish", new Type[] { })]
+        public class bhaptics_DemonicBurstStop
+        {
+            [HarmonyPostfix]
+            public static void Postfix(LaserBase __instance)
+            {
+                //tactsuitVr.StopBurst();
             }
         }
 
