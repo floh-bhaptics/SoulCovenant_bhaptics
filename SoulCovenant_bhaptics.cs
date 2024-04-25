@@ -44,58 +44,60 @@ namespace SoulCovenant_bhaptics
             }
         }
 
-        [HarmonyPatch(typeof(TransformWeapon), "OnGrabbed", new Type[] { typeof(Grabber) })]
-        public class bhaptics_TransformWeapon
+        [HarmonyPatch(typeof(TransformWeaponBase), "OnTransform", new Type[] {  })]
+        public class bhaptics_OnTransformWeapon
         {
             [HarmonyPostfix]
-            public static void Postfix(TransformWeapon __instance)
+            public static void Postfix(TransformWeaponBase __instance)
             {
                 bool isRight = (__instance.ThisWeapon.controllerHand == BNG.ControllerHand.Right);
                 tactsuitVr.TranformWeapon(isRight);
             }
         }
 
-        [HarmonyPatch(typeof(TransformWeapon), "OnReleased", new Type[] {  })]
-        public class bhaptics_UnTransformWeapon
+
+        [HarmonyPatch(typeof(Laser), "PlayLaserShotEffect", new Type[] { })]
+        public class bhaptics_LaserShot
         {
             [HarmonyPostfix]
-            public static void Postfix(TransformWeapon __instance)
+            public static void Postfix(Laser __instance)
             {
-                bool isRight = (__instance.ThisWeapon.controllerHand == BNG.ControllerHand.Right);
+                tactsuitVr.TranformWeapon(!rightHanded);
+            }
+        }
+
+        [HarmonyPatch(typeof(Laser), "SetHand", new Type[] { typeof(DominantHandSetter.DominantHandType) })]
+        public class bhaptics_LaserSetHand
+        {
+            [HarmonyPostfix]
+            public static void Postfix(Laser __instance, DominantHandSetter.DominantHandType dominantHandType)
+            {
+                rightHanded = (dominantHandType == DominantHandSetter.DominantHandType.Right);
+            }
+        }
+
+        [HarmonyPatch(typeof(WeaponStorage), "OnGrabWeapon", new Type[] { typeof(Weapon) })]
+        public class bhaptics_GrabWeapon
+        {
+            [HarmonyPostfix]
+            public static void Postfix(WeaponStorage __instance, Weapon weapon)
+            {
+                bool isRight = (weapon.controllerHand == BNG.ControllerHand.Right);
                 tactsuitVr.TranformWeapon(isRight);
             }
         }
 
-        [HarmonyPatch(typeof(Weapon), "OwnerInitialize", new Type[] { typeof(Player), typeof(ID_SWORD), typeof(DominantHandSetter.DominantHandType), typeof(Action<Weapon>), typeof(Action<Weapon>) })]
-        public class bhaptics_SummonWeapon
+        [HarmonyPatch(typeof(WeaponStorage), "OnReleaseWeapon", new Type[] { typeof(Weapon) })]
+        public class bhaptics_ReleaseWeapon
         {
             [HarmonyPostfix]
-            public static void Postfix(Weapon __instance)
+            public static void Postfix(WeaponStorage __instance, Weapon weapon)
             {
-                bool isRight = (__instance.controllerHand == BNG.ControllerHand.Right);
+                bool isRight = (weapon.controllerHand == BNG.ControllerHand.Right);
                 tactsuitVr.TranformWeapon(isRight);
             }
         }
 
-        [HarmonyPatch(typeof(LaserBase), "LaserExposureStart", new Type[] {  })]
-        public class bhaptics_DemonicBurstStart
-        {
-            [HarmonyPostfix]
-            public static void Postfix(LaserBase __instance)
-            {
-                tactsuitVr.BurstRecoil(rightHanded);
-            }
-        }
-
-        [HarmonyPatch(typeof(LaserBase), "LaserFinish", new Type[] { })]
-        public class bhaptics_DemonicBurstStop
-        {
-            [HarmonyPostfix]
-            public static void Postfix(LaserBase __instance)
-            {
-                //tactsuitVr.StopBurst();
-            }
-        }
 
         private static KeyValuePair<float, float> getAngleAndShift(Transform player, Vector3 hit)
         {
@@ -150,9 +152,6 @@ namespace SoulCovenant_bhaptics
             [HarmonyPostfix]
             public static void Postfix(PlayerDamageReciver __instance, Vector3 hitPos)
             {
-                tactsuitVr.LOG("Damage Received.");
-                // __instance.Player.CharacterPosition
-                //Vector3 hitPosition = zombie.Position;
                 Transform playerTransform = __instance.Player.PlayerCameraTransform;
                 var angleShift = getAngleAndShift(playerTransform, hitPos);
                 tactsuitVr.PlayBackHit("Impact", angleShift.Key, angleShift.Value);
