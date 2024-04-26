@@ -16,7 +16,7 @@ using BNG;
 using VEGA.MasterData;
 using VEGA.Utility;
 
-[assembly: MelonInfo(typeof(SoulCovenant_bhaptics.SoulCovenant_bhaptics), "SoulCovenant_bhaptics", "1.0.0", "Florian Fahrenberger")]
+[assembly: MelonInfo(typeof(SoulCovenant_bhaptics.SoulCovenant_bhaptics), "SoulCovenant_bhaptics", "1.0.1", "Florian Fahrenberger")]
 [assembly: MelonGame("thirdverse", "soulcovenant")]
 
 namespace SoulCovenant_bhaptics
@@ -51,7 +51,7 @@ namespace SoulCovenant_bhaptics
             public static void Postfix(TransformWeaponBase __instance)
             {
                 bool isRight = (__instance.ThisWeapon.controllerHand == BNG.ControllerHand.Right);
-                tactsuitVr.TranformWeapon(isRight);
+                tactsuitVr.TranformWeapon(!isRight);
             }
         }
 
